@@ -1,25 +1,38 @@
-# Document Generator
+# 🧠 Generador de Informes con IA Local
 
-This repository provides a small FastAPI application to generate corporate reports and PowerPoint presentations.
+Aplicación de escritorio multiplataforma que permite generar informes en formatos Word, PDF, Excel y PowerPoint mediante inteligencia artificial **ejecutada localmente**, sin conexión a internet ni uso de APIs de terceros.
 
-## Requisitos
+---
 
-- Python 3.11 (incluye FastAPI en este entorno)
+## 🚀 Características principales
 
-## Uso
+- ✅ Generación de contenido textual con IA local (llama.cpp)
+- ✅ Creación de documentos profesionales:
+  - Word (.docx)
+  - PDF (.pdf)
+  - Excel (.xlsx)
+  - PowerPoint (.pptx)
+- ✅ Interfaz gráfica ligera y multiplataforma (Tkinter)
+- ✅ Totalmente offline y sin costes asociados
+- ✅ Stack 100% gratuito y open source
 
-Instale las dependencias y ejecute el servidor:
+---
+
+## 🛠️ Requisitos
+
+- Python 3.11 o superior
+- 4 GB de RAM (mínimo)
+- CPU moderna (doble núcleo)
+- Git (opcional)
+- llama.cpp compilado localmente
+- Modelo `.gguf` (recomendado: TinyLLaMA o Phi-2)
+
+---
+
+## 📦 Instalación
+
+### 1. Clona el repositorio (o crea la estructura manualmente)
 
 ```bash
-pip install openai
-python server.py
-```
-
-Abra `http://localhost:8000` en su navegador para ingresar el título y contenido del informe o la presentación.
-
-- El botón **Crear Informe** genera un archivo HTML de más de 30 páginas que puede imprimir como PDF.
-- El botón **Crear PPT** descarga un archivo `presentation.pptx` sencillo con una diapositiva que contiene el título y el contenido.
-
-## Uso con LocalAI
-
-Si dispone de una instancia de [LocalAI](https://github.com/go-skynet/LocalAI), defina la variable de entorno `OPENAI_BASE_URL` apuntando a su servidor (por ejemplo `http://localhost:8080/v1`). El programa utilizará esa URL para generar el texto de los informes.
+git clone https://github.com/usuario/generador-informes-ia-local.git
+cd generador-informes-ia-local
