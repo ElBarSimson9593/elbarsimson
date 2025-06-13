@@ -2,6 +2,18 @@ from fastapi import FastAPI, Form
 from fastapi.responses import HTMLResponse, StreamingResponse
 import io
 import zipfile
+import openai
+import os
+
+async def generar_contenido_ia(prompt: str) -> str:
+    openai.api_key = os.getenv("OPENAI_API_KEY")
+    response = await openai.ChatCompletion.acreate(
+        model="gpt-3.5-turbo",
+        messages=[{"role": "user", "content": prompt}],
+        max_tokens=500
+    )
+    texto_generado = response.choices[0].message.content.strip()
+    return texto_generado
 
 app = FastAPI()
 
