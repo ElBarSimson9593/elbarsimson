@@ -6,11 +6,19 @@ import openai
 import os
 
 async def generar_contenido_ia(prompt: str) -> str:
+    """Generate text using a model compatible with the OpenAI API.
+
+    The function reads the API key from ``OPENAI_API_KEY`` and optionally
+    a custom URL from ``OPENAI_BASE_URL`` (useful for LocalAI).
+    """
     openai.api_key = os.getenv("OPENAI_API_KEY")
+    base_url = os.getenv("OPENAI_BASE_URL")
+    if base_url:
+        openai.base_url = base_url
     response = await openai.ChatCompletion.acreate(
         model="gpt-3.5-turbo",
         messages=[{"role": "user", "content": prompt}],
-        max_tokens=500
+        max_tokens=500,
     )
     texto_generado = response.choices[0].message.content.strip()
     return texto_generado
@@ -67,8 +75,10 @@ def make_report_html(title: str, content: str) -> str:
 
 @app.post("/generate-report")
 async def generate_report(title: str = Form(...), content: str = Form(...)):
-    html = make_report_html(title, content)
-    return HTMLResponse(html, media_type='text/html')
+    """Create an HTML report using AI-generated content."""
+    ai_text = await generar_contenido_ia(content)
+    html = make_report_html(title, ai_text)
+    return HTMLResponse(html, media_type="text/html")
 
 # PPTX templates
 CONTENT_TYPES = """<?xml version='1.0' encoding='UTF-8'?>
