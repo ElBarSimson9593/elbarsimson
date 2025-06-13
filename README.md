@@ -1,6 +1,6 @@
 # Document Generator
 
-This repository provides a small FastAPI application to generate corporate reports and PowerPoint presentations.
+This repository provides a small FastAPI application to generate corporate reports, PowerPoint presentations and Word documents.
 
 ## Requisitos
 
@@ -18,3 +18,4 @@ Abra `http://localhost:8000` en su navegador para ingresar el título y contenid
 
 - El botón **Crear Informe** genera un archivo HTML de más de 30 páginas que puede imprimir como PDF.
 - El botón **Crear PPT** descarga un archivo `presentation.pptx` sencillo con una diapositiva que contiene el título y el contenido.
+- El botón **Crear DOCX** descarga un archivo `report.docx` con múltiples páginas de contenido.

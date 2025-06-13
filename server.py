@@ -26,6 +26,14 @@ INDEX_HTML = """
   <textarea name='content' rows='10' cols='50'></textarea><br>
   <input type='submit' value='Crear PPT'>
 </form>
+
+<h2>Word</h2>
+<form action='/generate-docx' method='post'>
+  Título: <input type='text' name='title'><br>
+  Contenido:<br>
+  <textarea name='content' rows='10' cols='50'></textarea><br>
+  <input type='submit' value='Crear DOCX'>
+</form>
 </body>
 </html>
 """
@@ -233,6 +241,55 @@ def create_pptx(title: str, content: str) -> io.BytesIO:
         pptx.writestr('ppt/theme/theme1.xml', THEME1_XML)
     buffer.seek(0)
     return buffer
+
+DOCX_TYPES = """<?xml version='1.0' encoding='UTF-8'?>
+<Types xmlns='http://schemas.openxmlformats.org/package/2006/content-types'>
+ <Default Extension='rels' ContentType='application/vnd.openxmlformats-package.relationships+xml'/>
+ <Default Extension='xml' ContentType='application/xml'/>
+ <Override PartName='/word/document.xml' ContentType='application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml'/>
+</Types>"""
+
+DOCX_RELS = """<?xml version='1.0' encoding='UTF-8'?>
+<Relationships xmlns='http://schemas.openxmlformats.org/package/2006/relationships'>
+ <Relationship Id='rId1' Type='http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument' Target='word/document.xml'/>
+</Relationships>"""
+
+def make_docx_document(title: str, content: str) -> str:
+    paragraphs = []
+    for i in range(1, 31):
+        paragraphs.append(
+            f"<w:p><w:r><w:t>{title} - Pagina {i}</w:t></w:r></w:p>"
+            + f"<w:p><w:r><w:t>{content}</w:t></w:r></w:p>"
+            + "<w:p><w:r><w:br w:type='page'/></w:r></w:p>"
+        )
+    return (
+        "<?xml version='1.0' encoding='UTF-8' standalone='yes'?>"
+        "<w:document xmlns:w='http://schemas.openxmlformats.org/wordprocessingml/2006/main'>"
+        "<w:body>"
+        + "".join(paragraphs)
+        + "</w:body></w:document>"
+    )
+
+def create_docx(title: str, content: str) -> io.BytesIO:
+    buffer = io.BytesIO()
+    doc_xml = make_docx_document(title, content)
+    with zipfile.ZipFile(buffer, 'w', zipfile.ZIP_DEFLATED) as docx:
+        docx.writestr('[Content_Types].xml', DOCX_TYPES)
+        docx.writestr('_rels/.rels', DOCX_RELS)
+        docx.writestr('word/document.xml', doc_xml)
+    buffer.seek(0)
+    return buffer
+
+
+@app.post('/generate-docx')
+async def generate_docx(title: str = Form(...), content: str = Form(...)):
+    buf = create_docx(title, content)
+    headers = {'Content-Disposition': 'attachment; filename=report.docx'}
+    return StreamingResponse(
+        buf,
+        media_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        headers=headers,
+    )
 
 @app.post('/generate-ppt')
 async def generate_ppt(title: str = Form(...), content: str = Form(...)):
